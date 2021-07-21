@@ -2,16 +2,17 @@
 
 function route($method, $url_data, $data) {
 
+    if ($method == 'POST') return register($data);
+    else header('HTTP/1.1 405 Method Not Allowed');
+
+}
+
+function register($data) {
+
     include 'Core/connect.php';
 
-    /* Method check */
-    if ($method !== 'POST') {
-        header('HTTP/1.1 405 Method Not Allowed');
-        return null;
-    }
-
     /* Validation */
-    $validator = new Validate();
+    $validator = new Validator();
 
     $validator->validate($data, [
         'first_name'        => ['required', 'string'],
@@ -40,15 +41,5 @@ function route($method, $url_data, $data) {
         return null;
 
     }
-
-    /* Validation error */
-    header('HTTP/1.1 422 Validation error');
-    return [
-       "error" => [
-           "code" => 422,
-           "message" => "Validation error",
-           "errors" => $validator->errors
-       ]
-    ];
 
 }

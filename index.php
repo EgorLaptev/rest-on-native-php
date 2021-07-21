@@ -1,10 +1,11 @@
 <?php
 
+/* Disable warnings */
+error_reporting(E_ERROR);
+
+/* Default headers */
 header('Content-Type: application/json');
-
-include_once "Core/Validate.php";
-
-//error_reporting(E_ERROR)
+header('HTTP/1.1 200 OK');
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -34,16 +35,18 @@ function getData($method) {
 
 }
 
-$url = (isset($_GET['q'])) ? $_GET['q'] : '';
-$url = rtrim($url, '/');
+$url  = (isset($_GET['q'])) ? $_GET['q'] : '';
+$url  = rtrim($url, '/');
 $urls = explode('/', $url);
 
 $route = $urls[0];
 $url_data  = array_splice($urls, 1);
 
+include_once "Core/Validator.php";
 include_once "routes/$route.php";
 
-/* Show results */
-var_export(
-    json_encode(route($method, $url_data, $data))
-);
+/* Show response */
+
+$response = route($method, $url_data, $data);
+if ($response !== null) echo json_encode($response);
+
